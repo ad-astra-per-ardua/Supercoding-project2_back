@@ -1,4 +1,4 @@
-package com.example.project02.model;
+package com.example.project02.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -12,7 +12,10 @@ import javax.validation.constraints.NotBlank;
 @AllArgsConstructor
 @NoArgsConstructor
 @Setter
-public class Request {
+public class UserRequest {
+
+    @NotBlank
+    private String name;
 
     @NotBlank
     @Email
@@ -25,9 +28,16 @@ public class Request {
 
     private String address;
 
+    private String detailedAddress;
+
     private String gender;
 
     private String status;
 
-    private String type;
+    private String img;
+
+    private boolean verification;
+
+    private String certificationNumber;
+
 }
