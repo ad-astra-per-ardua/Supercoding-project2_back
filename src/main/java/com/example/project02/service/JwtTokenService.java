@@ -2,6 +2,7 @@ package com.example.project02.service;
 
 import com.example.project02.entity.User;
 import com.example.project02.dto.UserRequest;
+import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
@@ -12,7 +13,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
 import org.springframework.stereotype.Service;
-
 import java.sql.Date;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
@@ -57,6 +57,15 @@ public class JwtTokenService {
         return headers;
     }
 
+    public Long decodeToken(String token){
+        validation(token);
+        Claims claims = Jwts.parserBuilder().setSigningKey(Keys.hmacShaKeyFor(secretKey.getBytes()))
+                .build()
+                .parseClaimsJws(token)
+                .getBody();
+        return claims.get("user_id", Long.class);
+    }
+
     // 토큰 검증
     public void validation(String token){
         var key = Keys.hmacShaKeyFor(secretKey.getBytes());
@@ -74,7 +83,7 @@ public class JwtTokenService {
                 throw new RuntimeException("잘못된 token 값입니다.");
             } else if (e instanceof ExpiredJwtException) {
                 throw new RuntimeException("token 시간이 만료되었습니다.");
-            } else throw new RuntimeException("알 수 없는 오류가 발생했습니다.");
+            } else throw new RuntimeException("알 수 없는 오류가 발생했습니다." + e.getMessage());
         }
     }
 
